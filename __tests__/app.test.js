@@ -8,7 +8,7 @@ beforeEach(() => seed(data));
 afterAll(() => db.end());
 
 describe('GET /api/topics', () => {
-    test('200: should respond with a JSON object containing an array of topic objects, each of which should contain the "slug" and "description" properties', () => {
+    test('status:200, responds with a JSON object containing an array of topic objects, each of which should contain the "slug" and "description" properties', () => {
         return request(app)
         .get('/api/topics')
         .expect(200)
@@ -16,12 +16,22 @@ describe('GET /api/topics', () => {
 
         const { topics } = body;
 
+        expect(topics).toHaveLength(3);
+
         topics.forEach((topic) => {
-            expect(topic).toMatchObject({
-                slug: expect.any(String),
-                description: expect.any(String)
-            })
+                expect(topic).toMatchObject({
+                    slug: expect.any(String),
+                    description: expect.any(String)
+                })
         })
         })
     })
+    test('status:404, responds with error message "Not Found" when path does not exist', () => {
+        return request(app)
+          .get('/api/topic')
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe('Not Found');
+          });
+      });
 })
