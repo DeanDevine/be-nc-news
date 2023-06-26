@@ -24,4 +24,12 @@ describe('GET /api/topics', () => {
         })
         })
     })
+    test('400: should respond with error message "Bad Request" if client makes sort_by request on property that does not exist', () => {
+        return request(app)
+        .get('/api/topics?sort_by=not_slug')
+        .expect(400)
+        .then(({body}) => {
+            expect(body).toEqual({msg: 'Bad Request'})
+        })
+    })
 })

@@ -1,9 +1,15 @@
 const { selectTopics } = require("../models/model-topics")
 
-exports.getTopics = (_, res) => {
+exports.getTopics = (req, res, next) => {
 
-selectTopics().then((topics) => {
+    const {sort_by} = req.query
+
+    selectTopics(sort_by).then((topics) => {
     res.status(200).send({topics})
+
+}).catch((err) => {
+    console.log(err)
+    next(err)
 })
 
 }
