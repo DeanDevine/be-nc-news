@@ -45,12 +45,11 @@ describe('GET /api', () => {
 
         const { endpoints } = body;
 
+        const endpointsJSON = require('../endpoints.json')
+
         expect(Object.keys(endpoints).length).toBeGreaterThanOrEqual(3)
 
-        for (const endpoint in endpoints) {
-            const properties = endpoints[endpoint];
-            expect(properties).toHaveProperty("description", expect.any(String));
-        }
+        expect(endpoints).toEqual(endpointsJSON)
 
         })
 
