@@ -35,3 +35,23 @@ describe('GET /api/topics', () => {
           });
       });
 })
+
+describe('GET /api', () => {
+    test('status:200, responds with a JSON object containing an array of /api endpoint objects, each of which contains a property that describes what the endpoint serves', () => {
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then(({body}) => {
+
+        const { endpoints } = body;
+
+        const endpointsJSON = require('../endpoints.json')
+
+        expect(Object.keys(endpoints).length).toBeGreaterThanOrEqual(3)
+
+        expect(endpoints).toEqual(endpointsJSON)
+
+        })
+
+    })
+})
