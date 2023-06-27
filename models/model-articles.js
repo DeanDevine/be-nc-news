@@ -12,7 +12,7 @@ exports.selectArticles = () => {
     articles.article_img_url,
     COUNT(comments.article_id) AS comment_count 
     FROM articles 
-    JOIN comments USING (article_id) 
+    LEFT JOIN comments USING (article_id) 
     GROUP BY articles.article_id
     ORDER BY articles.created_at DESC`
 

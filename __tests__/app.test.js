@@ -102,7 +102,7 @@ describe('GET /api/articles', () => {
 
         const { articles } = body;
 
-        expect(articles).toHaveLength(5);
+        expect(articles).toHaveLength(13);
 
         articles.forEach((article) => {
                 expect(article).toMatchObject({
@@ -125,6 +125,8 @@ describe('GET /api/articles', () => {
             
             const { articles } = body;
 
+            expect(articles).toHaveLength(13);
+
             articles.forEach((article) => {
                 expect(article).toHaveProperty("comment_count", expect.any(String));
 
@@ -139,6 +141,8 @@ describe('GET /api/articles', () => {
             
             const { articles } = body;
 
+            expect(articles).toHaveLength(13);
+
             articles.forEach((article) => {
                 expect(article).not.toHaveProperty("body");
 
@@ -152,6 +156,8 @@ describe('GET /api/articles', () => {
         .then(({ body }) => {
             
             const { articles } = body;
+
+            expect(articles).toHaveLength(13);
 
             const oldestArticle = {
                 author: 'icellusedkars',
