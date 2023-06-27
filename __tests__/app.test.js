@@ -139,8 +139,6 @@ describe('GET /api/articles', () => {
             
             const { articles } = body;
 
-            console.log(articles)
-
             articles.forEach((article) => {
                 expect(article).not.toHaveProperty("body");
 
