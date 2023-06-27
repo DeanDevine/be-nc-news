@@ -66,7 +66,7 @@ describe('GET /api/articles/:article_id', () => {
         expect(body.article).toMatchObject({
             author: expect.any(String),
             title: expect.any(String),
-            article_id: expect.any(Number),
+            article_id: 1,
             body: expect.any(String),
             topic: expect.any(String),
             created_at: expect.any(String),
@@ -75,9 +75,17 @@ describe('GET /api/articles/:article_id', () => {
             })
         })
     })
-    test('status:404, responds with "Not Found" when article_id does not exist', () => {
+    test('status:400, responds with "Invalid Input" when article_id is an invalid type', () => {
         return request(app)
-        .delete('/api/articles/9999')
+        .get('/api/articles/not_article_id')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    })
+    test('status:404, responds with "Not Found" when article_id is a valid type but does not exist', () => {
+        return request(app)
+        .get('/api/articles/9999')
         .expect(404)
         .then(({body}) => {
             expect(body.msg).toBe('Not Found')
