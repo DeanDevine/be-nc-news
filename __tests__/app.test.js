@@ -181,13 +181,17 @@ describe('GET /api/articles/:article_id/comments', () => {
         .expect(200)
         .then(({body}) => {
 
-            const article = [{"article_id": 11, 
-            "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700", 
-            "author": "icellusedkars", "body": "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?", 
-            "created_at": "2020-01-15T22:21:00.000Z", 
-            "title": "Am I a cat?", 
-            "topic": "mitch", 
-            "votes": 0}]
+            const article = [
+                {
+                    "article_id": 11, 
+                    "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700", 
+                    "author": "icellusedkars", "body": "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?", 
+                    "created_at": "2020-01-15T22:21:00.000Z", 
+                    "title": "Am I a cat?", 
+                    "topic": "mitch", 
+                    "votes": 0
+                }
+            ]
 
             const { comments } = body;
 
