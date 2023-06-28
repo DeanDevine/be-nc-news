@@ -175,6 +175,18 @@ describe('GET /api/articles/:article_id/comments', () => {
 
         })
     })
+    test('status:200, returns an empty array when article_id is valid but does not have any comments', () => {
+        return request(app)
+        .get('/api/articles/11/comments')
+        .expect(200)
+        .then(({body}) => {
+
+            const { comments } = body;
+
+            expect(comments).toHaveLength(0)
+
+        })
+    })
     test('status:400, responds with "Invalid Input" when article_id is an invalid type', () => {
         return request(app)
         .get('/api/articles/:not_article_id/comments')
@@ -182,16 +194,6 @@ describe('GET /api/articles/:article_id/comments', () => {
         .then(({body}) => {
 
             expect(body.msg).toBe('Invalid Input')
-
-        })
-    })
-    test('status:404, responds with "Not Found" when article_id is a valid type but does not exist', () => {
-        return request(app)
-        .get('/api/articles/9999/comments')
-        .expect(404)
-        .then(({body}) => {
-
-            expect(body.msg).toBe('Not Found')
 
         })
     })

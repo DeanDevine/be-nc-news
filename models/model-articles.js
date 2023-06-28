@@ -47,9 +47,6 @@ exports.selectCommentsByArticleId = (article_id) => {
     WHERE article_id = $1
     ORDER BY created_at ASC`, [article_id])
     .then(({rows}) => {
-        if (!rows.length) {
-            return Promise.reject({ status: 404, msg: "Not Found" })
-        }
         return rows;
     })
 
