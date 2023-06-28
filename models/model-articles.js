@@ -46,8 +46,13 @@ exports.selectCommentsByArticleId = (article_id) => {
     FROM comments 
     WHERE article_id = $1
     ORDER BY created_at ASC`, [article_id])
-    .then(({rows}) => {
-        return rows;
-    })
-
-}
+    .then((rows) => {
+        if (!rows.rows.length) {
+            return db.query('SELECT * FROM articles WHERE article_id = $1;', [article_id]) } else return rows;
+        }).then((rows) => {
+            if (!rows.rows.length) {
+                return Promise.reject({ status: 404, msg: 'Not Found' })
+            }
+            return rows.rows;
+        })
+        }
