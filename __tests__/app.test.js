@@ -209,3 +209,88 @@ describe('GET /api/articles/:article_id/comments', () => {
         })
     })
 });
+
+describe('POST /api/articles/:article_id/comments', () => {
+    test('status:201, posts comment on article and responds with posted comment', () => {
+        
+        const newComment = {
+            username: "lurker",
+            body: "Birds aren't real"
+        }
+        
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+
+            const { comment } = body;
+
+            expect(comment).toMatchObject({
+                comment_id: expect.any(Number),
+                body: "Birds aren't real",
+                article_id: 1,
+                author: "lurker",
+                votes: 0,
+                created_at: expect.any(String)
+            })
+        })
+    })
+    test('status:201, posts comment with no extra properties other than username and body', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({ username: "lurker", body: "let me try something", should_not_exist: "something" })
+        .expect(201)
+        .then(({body}) => {
+
+            const { comment } = body;
+
+            expect(comment).not.toHaveProperty('should_not_exist')
+        })
+    })
+    test('status:400, responds with "Bad Request" when username is not defined', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({ body: "400 when" })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:400, responds with "Bad Request" when comment body is not defined', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({ username: "lurker" })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:404, responds with "Not Found" when username does not exist', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .send({ username: "lovestopost", body: "love it!" })
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+    test('status:400, responds with "Invalid Input" when article_id is an invalid type', () => {
+        return request(app)
+        .post('/api/articles/:not_article_id/comments')
+        .send({ username: "lurker", body: "400 when" })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    })
+    test('status:404, responds with "Not Found" when article_id is a valid type but does not exist', () => {
+        return request(app)
+        .post('/api/articles/9999/comments')
+        .send({ username: "lurker", body: "404 when" })
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+})
