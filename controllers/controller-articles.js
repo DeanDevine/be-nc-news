@@ -1,4 +1,4 @@
-const { selectArticles, selectArticle, selectCommentsByArticleId } = require("../models/model-articles");
+const { selectArticles, selectArticle, selectCommentsByArticleId, insertCommentIntoArticle } = require("../models/model-articles");
 
 exports.getArticles = (req, res, next) => {
 
@@ -25,6 +25,18 @@ exports.getCommentsByArticleId = (req, res, next) => {
 
     return selectCommentsByArticleId(article_id).then((comments) => {
         res.status(200).send({comments})
+    })
+    .catch(next)
+}
+
+exports.postCommentOnArticle = (req, res, next) => {
+
+    const { article_id } = req.params
+    const author = req.body.username
+    const { body } = req.body
+    
+    insertCommentIntoArticle(article_id, author, body).then((comment) => {
+        res.status(201).send({ comment })
     })
     .catch(next)
 }

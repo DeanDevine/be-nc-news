@@ -55,5 +55,18 @@
           "article_id": 1
         }]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment on an article and serves an object of that comment",
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "body": "Birds aren't real",
+        "article_id": 1,
+        "author": "lurker",
+        "votes": 0,
+        "created_at": "2023-06-28T19:19:35.921Z"
+      }
+    }
   }
 }
