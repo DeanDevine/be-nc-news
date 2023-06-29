@@ -77,7 +77,7 @@ describe('GET /api/articles/:article_id', () => {
     })
     test('status:400, responds with "Invalid Input" when article_id is an invalid type', () => {
         return request(app)
-        .get('/api/articles/not_article_id')
+        .get('/api/articles/:not_article_id')
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe('Invalid Input')
@@ -114,7 +114,7 @@ describe('GET /api/articles', () => {
                     votes: expect.any(Number),
                     article_img_url: expect.any(String),
                     comment_count: expect.any(String)
-                    })
+                })
                 expect(article).not.toHaveProperty("body")
         })
         })
@@ -130,6 +130,81 @@ describe('GET /api/articles', () => {
             expect(articles).toHaveLength(13);
 
             expect(articles).toBeSorted('created_at', { descending: true })
+
+        })
+    })
+});
+
+describe('GET /api/articles/:article_id/comments', () => {
+    test('status:200, responds with a JSON object containing an array of comment objects for the given article_id of which each object has the following properties: comment_id, votes, created_at, author, body, article_id', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) => {
+
+            const { comments } = body;
+
+            expect(comments).toHaveLength(11);
+
+            comments.forEach((comment) => {
+                expect(comment).toMatchObject({
+
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    article_id: expect.any(Number)
+
+                })
+            })
+
+        })
+    })
+    test('status:200, comments are sorted by their created_at date in ascending order', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body}) => {
+
+            const { comments } = body;
+
+            expect(comments).toHaveLength(11)
+
+            expect(comments).toBeSorted('created_at', { ascending: true })
+
+        })
+    })
+    test('status:200, returns an empty array when article_id is valid but does not have any comments', () => {
+        return request(app)
+        .get('/api/articles/11/comments')
+        .expect(200)
+        .then(({body}) => {
+
+            const { comments } = body;
+
+            expect(comments).toEqual([])
+
+        })
+
+    })
+    test('status:400, responds with "Invalid Input" when article_id is an invalid type', () => {
+        return request(app)
+        .get('/api/articles/:not_article_id/comments')
+        .expect(400)
+        .then(({body}) => {
+
+            expect(body.msg).toBe('Invalid Input')
+
+        })
+    })
+    test('status:404, responds with "Not Found" when article_id is a valid type but does not exist', () => {
+        return request(app)
+        .get('/api/articles/9999/comments')
+        .expect(404)
+        .then(({body}) => {
+
+            expect(body.msg).toBe('Not Found')
 
         })
     })

@@ -32,3 +32,29 @@ exports.selectArticle = (article_id) => {
         return rows[0];
     })
 }
+
+exports.selectCommentsByArticleId = (article_id) => {
+
+    return db
+    .query(`SELECT 
+    comment_id, 
+    votes, 
+    created_at, 
+    author, 
+    body, 
+    article_id 
+    FROM comments 
+    WHERE article_id = $1
+    ORDER BY created_at ASC`, [article_id])
+    .then((result) => {
+        if (!result.rows.length) {
+            return db.query('SELECT * FROM articles WHERE article_id = $1;', [article_id]) } else return result;
+        }).then(({rows}) => {
+            if (!rows.length) {
+                return Promise.reject({ status: 404, msg: 'Not Found' })
+            } else if (!rows[0].comment_id) {
+                return [];
+            }
+            return rows;
+        })
+        }
