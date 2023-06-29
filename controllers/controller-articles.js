@@ -2,7 +2,9 @@ const { selectArticles, selectArticle, selectCommentsByArticleId, insertCommentI
 
 exports.getArticles = (req, res, next) => {
 
-    selectArticles().then((articles) => {
+    const { topic, sort_by, order } = req.query;
+
+    selectArticles(topic, sort_by, order).then((articles) => {
     res.status(200).send({articles})
 
 })

@@ -133,6 +133,128 @@ describe('GET /api/articles', () => {
 
         })
     })
+    test('status:200, articles are filtered by topic query', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(12)
+
+        articles.forEach((article) => {
+            expect(article.topic).toBe('mitch')
+        })
+
+        })
+    })
+    test('status:200, articles are sorted by sort_by query', () => {
+        return request(app)
+        .get('/api/articles?sort_by=articles.title')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(13)
+
+        expect(articles).toBeSorted('articles.title', { ascending: true })
+
+        })
+    })
+    test('status:200, articles are ordered by order query', () => {
+        return request(app)
+        .get('/api/articles?order=ASC')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(13)
+
+        expect(articles).toBeSorted('articles.created_at', { ascending: true })
+
+        })
+    })
+    test('status:200, articles are filtered by topic query and sorted by sort_by query', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=articles.title')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(12)
+
+        articles.forEach((article) => {
+            expect(article.topic).toBe('mitch')
+        })
+
+        expect(articles).toBeSortedBy('title', { ascending: true })
+
+        })
+    })
+    test('status:200, articles are filtered by topic query, sorted by sort_by query and ordered by order query', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&sort_by=articles.title&order=DESC')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(12)
+
+        articles.forEach((article) => {
+            expect(article.topic).toBe('mitch')
+        })
+
+        expect(articles).toBeSortedBy('title', { descending: true })
+
+        })
+    })
+    test('status:200, responds with an empty array when topic query is valid but has no articles', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(0)
+
+        })
+    })
+    test('status:400, responds with "Bad Request" when making an invalid topic query', () => {
+        return request(app)
+        .get('/api/articles?topic=not_mitch')
+        .expect(400)
+        .then(({body}) => {
+
+        expect(body.msg).toBe('Bad Request')
+
+        })
+    })
+    test('status:400, responds with "Bad Request" when making a sort_by query on a column that is not permitted', () => {
+        return request(app)
+        .get('/api/articles?sort_by=articles.article_img_url')
+        .expect(400)
+        .then(({body}) => {
+
+        expect(body.msg).toBe('Bad Request')
+
+        })
+    })
+    test('status:400, responds with "Bad Request" when making an order query on anything other than ASC/DESC', () => {
+        return request(app)
+        .get('/api/articles?order=not_ASC_or_DESC')
+        .expect(400)
+        .then(({body}) => {
+
+        expect(body.msg).toBe('Bad Request')
+
+        })
+    })
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
