@@ -1,6 +1,24 @@
 const db = require('../db/connection')
 
-exports.selectArticles = () => {
+exports.selectArticles = (topic, sort_by, order) => {
+
+    const validTopic = ["mitch", "cats"]
+
+    const validSortBy = ["articles.author", "articles.title", "articles.article_id", "articles.topic", "articles.created_at", "articles.votes", "comment_count"]
+
+    const validOrder = ["ASC", "DESC"]
+
+    if (topic && !validTopic.includes(topic)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" })
+    }
+
+    if (sort_by && !validSortBy.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" })
+    }
+
+    if (order && !validOrder.includes(order)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" })
+    }
 
     let query = `SELECT 
     articles.author, 
@@ -12,11 +30,34 @@ exports.selectArticles = () => {
     articles.article_img_url,
     COUNT(comments.article_id) AS comment_count 
     FROM articles 
-    LEFT JOIN comments USING (article_id) 
-    GROUP BY articles.article_id
-    ORDER BY articles.created_at DESC`
+    LEFT JOIN comments USING (article_id) `
 
-    return db.query(`${query};`).then(({rows}) => {
+    const queryValues = []
+
+    if (topic) {
+        query += `WHERE articles.topic = $1 `
+        queryValues.push(topic)
+    }
+
+    query += `GROUP BY articles.article_id `
+
+    if (sort_by && !order) {
+        query += `ORDER BY ${sort_by} ASC `
+    }
+
+    if (order && !sort_by) {
+        query += `ORDER BY created_at ${order} `
+    }
+
+    if (!sort_by && !order) {
+        query += `ORDER BY articles.created_at DESC `
+    }
+
+    if(sort_by && order) {
+        query += `ORDER BY ${sort_by} ${order} `
+    }
+
+    return db.query(`${query};`, queryValues).then(({rows}) => {
         return rows;
     })
 }
