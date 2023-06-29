@@ -561,3 +561,27 @@ describe('GET /api/users', () => {
         })
     })
 })
+
+describe('GET /api/users/:username', () => {
+    test('status:200, responds with a JSON object containing specified user which has the following properties: username, avatar_url, name', () => {
+        return request(app)
+        .get('/api/users/lurker')
+        .expect(200)
+        .then(({body}) => {
+
+            expect(body.user).toMatchObject({
+                username: "lurker",
+                avatar_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+                name: 'do_nothing'
+            })
+        })
+    })
+    test('status:404, responds with "Not Found" when username does not exist', () => {
+        return request(app)
+        .get('/api/users/seagull')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+})
