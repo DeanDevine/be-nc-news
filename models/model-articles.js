@@ -76,3 +76,24 @@ exports.insertCommentIntoArticle = (article_id, author, body) => {
     })
 
 }
+
+exports.updateArticleVotes = (article_id, inc_votes) => {
+
+    if (isNaN(inc_votes) || !inc_votes) {
+        return Promise.reject({ status: 400, msg: "Bad Request" })
+    }
+
+    let query = `UPDATE articles
+    SET votes = votes + ${inc_votes}
+    WHERE article_id = $1 RETURNING *;`
+
+    return db
+    .query(query, [article_id])
+    .then(({rows}) => {
+        if (!rows.length) {
+            return Promise.reject({ status: 404, msg: "Not Found" })
+        }
+        return rows[0];
+    })
+
+}
