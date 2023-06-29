@@ -374,3 +374,34 @@ describe('PATCH /api/articles/:article_id', () => {
         })
     })
 })
+
+describe('DELETE /api/comments/:comment_id', () => {
+    test('status:204, responds with no content', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then(({res}) => {
+           
+            const { statusMessage } = res;
+            
+            expect(statusMessage).toBe('No Content')
+
+        })
+    })
+    test('status:400, responds with "Invalid Input" when comment_id is an invalid type', () => {
+        return request(app)
+        .delete('/api/comments/:not_comment_id')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    })
+    test('status:404, responds with "Not Found" when comment_id is a valid type but does not exist', () => {
+        return request(app)
+        .delete('/api/comments/9999')
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+})
