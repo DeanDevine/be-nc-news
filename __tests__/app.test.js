@@ -213,6 +213,18 @@ describe('GET /api/articles', () => {
 
         })
     })
+    test('status:200, responds with an empty array when topic query is valid but has no articles', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(0)
+
+        })
+    })
     test('status:400, responds with "Bad Request" when making an invalid topic query', () => {
         return request(app)
         .get('/api/articles?topic=not_mitch')

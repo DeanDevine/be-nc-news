@@ -12,7 +12,7 @@
   "GET /api/articles": {
     "description": "serves an array of all articles sorted by created_at date in descending order",
     "queries": ["topic", "sort_by", "order"],
-    "allowedTopics": ["mitch", "cats"],
+    "allowedTopics": ["mitch", "cats", "paper"],
     "allowedSortBy": ["articles.author", "articles.title", "articles.article_id", "articles.topic", "articles.created_at", "articles.votes", "comment_count"],
     "allowedOrder": ["ASC", "DESC"],
     "exampleResponse": {
