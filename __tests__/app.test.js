@@ -663,3 +663,155 @@ describe('PATCH /api/comments/:comment_id', () => {
         })
     })
 })
+
+describe('POST /api/articles', () => {
+    test('status:201, adds a new article with the following properties: author, title, body, topic, article_img_url and responds with newly created article with all those properties including the following properties: article_id, votes, created_at, comment_count. article_img_url defaults when not provided', () => {
+
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Dogs",
+            body: "Dogs vs Cats - what would win?",
+            topic: "cats"
+        }
+        
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(201)
+        .then(({ body }) => {
+
+            const { article } = body;
+
+            expect(article).toMatchObject({
+                author: "butter_bridge",
+                title: "Dogs",
+                body: "Dogs vs Cats - what would win?",
+                topic: "cats",
+                article_img_url: "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+                article_id: 14,
+                votes: 0,
+                created_at: expect.any(String),
+                comment_count: "0"
+            })
+        })
+    })
+    test('status:201, posts article with no extra properties other than author, title, body, topic, article_img_url', () => {
+
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Dogs",
+            body: "Dogs vs Cats - what would win?",
+            topic: "cats",
+            should_not_exist: "here's hoping"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(201)
+        .then(({body}) => {
+
+            const { article } = body;
+
+            expect(article).not.toHaveProperty('should_not_exist')
+        })
+    })
+    test('status:400, responds with "Bad Request" when author is not defined', () => {
+
+        const newArticle = {
+            title: "Dogs",
+            body: "Dogs vs Cats - what would win?",
+            topic: "cats"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:400, responds with "Bad Request" when title is not defined', () => {
+
+        const newArticle = {
+            author: "butter_bridge",
+            body: "Dogs vs Cats - what would win?",
+            topic: "cats"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:400, responds with "Bad Request" when body is not defined', () => {
+
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Dogs",
+            topic: "cats"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:400, responds with "Bad Request" when topic is not defined', () => {
+
+        const newArticle = {
+            author: "butter_bridge",
+            title: "Dogs",
+            body: "Dogs vs Cats - what would win?",
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:404, responds with "Not Found" when username(author) does not exist', () => {
+
+        const newArticle = {
+            author: "spy",
+            title: "Dogs",
+            body: "Dogs vs Cats - what would win?",
+            topic: "cats"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+    test('status:404, responds with "Not Found" when topic does not exist', () => {
+
+        const newArticle = {
+            author: "spy",
+            title: "Dogs",
+            body: "Dogs vs Cats - what would win?",
+            topic: "dogs"
+        }
+
+        return request(app)
+        .post('/api/articles')
+        .send(newArticle)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+})

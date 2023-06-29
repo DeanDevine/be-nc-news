@@ -150,3 +150,36 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
     })
 
 }
+
+exports.insertArticle = (author, title, body, topic, article_img_url="https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700") => {
+
+    if (!author || !title || !body || !topic) {
+        return Promise.reject({ status: 400, msg: "Bad Request" })
+    }
+
+    return db
+    .query(`INSERT INTO articles (author, title, body, topic, article_img_url) 
+    VALUES ($1, $2, $3, $4, $5) 
+    RETURNING *;`, [author, title, body, topic, article_img_url])
+    .then(({rows}) => {
+
+        return db
+        .query(`SELECT 
+        articles.author, 
+        articles.title, 
+        articles.body, 
+        articles.topic, 
+        articles.article_img_url, 
+        articles.article_id, 
+        articles.votes, 
+        articles.created_at, 
+        COUNT(comments.article_id) AS comment_count 
+        FROM articles 
+        LEFT JOIN comments USING (article_id) 
+        WHERE article_id = $1
+        GROUP BY articles.article_id;`, [rows[0].article_id])
+    }).then(({rows}) => {
+        return rows[0]
+    })
+
+}
