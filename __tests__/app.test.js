@@ -75,6 +75,18 @@ describe('GET /api/articles/:article_id', () => {
             })
         })
     })
+    test('status:200, requested article has a comment_count property which is the total count of all comments with this article_id', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body}) => {
+
+        const { article } = body;
+
+        expect(article.comment_count).toBe("11")
+
+        })
+    })
     test('status:400, responds with "Invalid Input" when article_id is an invalid type', () => {
         return request(app)
         .get('/api/articles/:not_article_id')
