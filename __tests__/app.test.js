@@ -585,3 +585,81 @@ describe('GET /api/users/:username', () => {
         })
     })
 })
+
+describe('PATCH /api/comments/:comment_id', () => {
+    test('status:201, updates the number of votes on a comment and responds with the updated comment', () => {
+        
+        const newVotes = { inc_votes: 17 }
+
+        return request(app)
+        .patch('/api/comments/17')
+        .send(newVotes)
+        .expect(201)
+        .then(({ body }) => {
+            
+            const { comment } = body;
+
+            expect(comment).toMatchObject({
+                comment_id: 17,
+                body: 'The owls are not what they seem.',
+                votes: 37,
+                author: 'icellusedkars',
+                article_id: 9,
+                created_at: '2020-03-14T17:02:00.000Z',
+            })
+           
+        })
+    })
+    test('status:201, updates the number of votes on an article when given a number which puts votes into negative numbers', () => {
+        
+        const newVotes = { inc_votes: -101 }
+
+        return request(app)
+        .patch('/api/comments/17')
+        .send(newVotes)
+        .expect(201)
+        .then(({ body }) => {
+            
+            const { votes } = body.comment;
+
+            expect(votes).toBe(-81)
+           
+        })
+    })
+    test('status:400, responds with "Bad Request" when inc_votes is not a number', () => {
+        return request(app)
+        .patch('/api/comments/17')
+        .send({ inc_votes: "this shouldn't work" })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:400, responds with "Bad Request" when inc_votes is undefined', () => {
+        return request(app)
+        .patch('/api/comments/17')
+        .send({})
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:400, responds with "Invalid Input" when comment_id is an invalid type', () => {
+        return request(app)
+        .patch('/api/comments/:not_comment_id')
+        .send({ inc_votes: 100 })
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    })
+    test('status:404, responds with "Not Found" when comment_id is a valid type but does not exist', () => {
+        return request(app)
+        .patch('/api/comments/9999')
+        .send({ inc_votes: 100 })
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+})
