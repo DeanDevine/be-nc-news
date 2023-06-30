@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Say Hello
-      run: echo 'Hello'
+        run: echo 'Hello'
 
   test-utils:
     runs-on: ubuntu-latest
