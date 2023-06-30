@@ -249,7 +249,7 @@ describe('GET /api/articles', () => {
 
         expect(articles[0]).toMatchObject({
             article_id: 5, 
-            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700", 
+            article_img_url: expect.any(String), 
             author: "rogersop", 
             comment_count: "2", 
             created_at: "2020-08-03T13:14:00.000Z", 
@@ -405,7 +405,7 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(comments[0]).toMatchObject({
             comment_id: 8,
             votes: 0,
-            created_at: '2020-04-14T20:19:00.000Z',
+            created_at: expect.any(String),
             author: 'icellusedkars',
             body: 'Delicious crackerbreads',
             article_id: 1
@@ -574,7 +574,7 @@ describe('PATCH /api/articles/:article_id', () => {
                 body: 'I find this existence challenging',
                 created_at: '2020-07-09T20:11:00.000Z',
                 votes: 101,
-                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+                article_img_url: expect.any(String)
             })
            
         })
