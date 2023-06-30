@@ -17,3 +17,5 @@ jobs:
     steps:
       - name: Checkout and clone repo
         uses: actions/checkout@v3
+      - name: Install dependencies
+        uses: npm install
