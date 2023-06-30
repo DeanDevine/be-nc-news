@@ -32,7 +32,7 @@ jobs:
       - name: Setup PSQL
         uses: harmon758/postgresql-action@v1
         with:
-          postgresql db: test_db
+          postgresql db: nc_news_test
           postgresql user: test_user
           postgresql password: password
         
@@ -40,7 +40,4 @@ jobs:
         run: npm install
 
       - name: Test app
-        run: PGDATABASE=test_db PGUSER=test_user PGPASSWORD=password npm run test-app
-      
-
-  
+        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=password npm run test-app
