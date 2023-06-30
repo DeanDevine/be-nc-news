@@ -1,3 +1,17 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Say Hello
+        run: echo 'Hello'
+  
   test-utils:
     runs-on: ubuntu-latest
     steps:
