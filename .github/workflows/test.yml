@@ -18,4 +18,6 @@ jobs:
       - name: Checkout and clone repo
         uses: actions/checkout@v3
       - name: Install dependencies
-        uses: npm install
+        run: npm install
+      - name: Test utils
+        run: npm run test-utils
