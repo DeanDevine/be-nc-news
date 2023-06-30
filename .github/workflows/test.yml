@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout and clone repo
-      uses: actions/checkout@v3
+        uses: actions/checkout@v3
       - name: Install dependencies
-      uses: npm install
+        uses: npm install
       - name: Test utils
-      run: npm run test-utils
+        run: npm run test-utils
