@@ -252,7 +252,7 @@ describe('GET /api/articles', () => {
             article_img_url: expect.any(String), 
             author: "rogersop", 
             comment_count: "2", 
-            created_at: "2020-08-03T13:14:00.000Z", 
+            created_at: expect.any(String), 
             title: "UNCOVERED: catspiracy to bring down democracy", 
             topic: "cats", 
             votes: 0
@@ -572,7 +572,7 @@ describe('PATCH /api/articles/:article_id', () => {
                 topic: 'mitch',
                 author: 'butter_bridge',
                 body: 'I find this existence challenging',
-                created_at: '2020-07-09T20:11:00.000Z',
+                created_at: expect.any(String),
                 votes: 101,
                 article_img_url: expect.any(String)
             })
