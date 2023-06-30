@@ -9,12 +9,25 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "posts a new topic and serves an object of that topic",
+    "exampleResponse": {
+      "topic": {
+        "slug": "dogs",
+        "description": "it's only fair"
+      }
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles sorted by created_at date in descending order",
-    "queries": ["topic", "sort_by", "order"],
+    "queries": ["topic", "sort_by", "order", "limit", "p"],
     "allowedTopics": ["mitch", "cats", "paper"],
     "allowedSortBy": ["articles.author", "articles.title", "articles.article_id", "articles.topic", "articles.created_at", "articles.votes", "comment_count"],
     "allowedOrder": ["ASC", "DESC"],
+    "queriesDescription": {
+      "limit": "the number of articles to be displayed, which is 10 by default",
+      "p": "the page number to start from"
+    },
     "exampleResponse": {
       "articles": [
         {
@@ -62,6 +75,11 @@
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of all comments for a given article_id, sorted by created_at date in ascending order",
+    "queries": ["limit", "p"],
+    "queriesDescription": {
+      "limit": "the number of comments to be displayed, which is 10 by default",
+      "p": "the page number to start from"
+    },
     "exampleResponse": {
       "comments": [
         {
@@ -104,6 +122,9 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes a comment specified by comment_id and responds with status:204 and 'No Content'"
+  },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes an article specified by article_id and all respective comments and responds with status:204 and 'No Content'"
   },
   "GET /api/users": {
     "description": "serves an array of all users",

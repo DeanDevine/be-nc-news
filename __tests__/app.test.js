@@ -114,7 +114,7 @@ describe('GET /api/articles', () => {
 
         const { articles } = body;
 
-        expect(articles).toHaveLength(13);
+        expect(articles).toHaveLength(10);
 
         articles.forEach((article) => {
                 expect(article).toMatchObject({
@@ -139,9 +139,9 @@ describe('GET /api/articles', () => {
             
             const { articles } = body;
 
-            expect(articles).toHaveLength(13);
+            expect(articles).toHaveLength(10);
 
-            expect(articles).toBeSorted('created_at', { descending: true })
+            expect(articles).toBeSortedBy('created_at', { descending: true })
 
         })
     })
@@ -153,7 +153,7 @@ describe('GET /api/articles', () => {
 
         const { articles } = body;
 
-        expect(articles).toHaveLength(12)
+        expect(articles).toHaveLength(10)
 
         articles.forEach((article) => {
             expect(article.topic).toBe('mitch')
@@ -169,9 +169,9 @@ describe('GET /api/articles', () => {
 
         const { articles } = body;
 
-        expect(articles).toHaveLength(13)
+        expect(articles).toHaveLength(10)
 
-        expect(articles).toBeSorted('articles.title', { ascending: true })
+        expect(articles).toBeSortedBy('title', { ascending: true })
 
         })
     })
@@ -183,9 +183,9 @@ describe('GET /api/articles', () => {
 
         const { articles } = body;
 
-        expect(articles).toHaveLength(13)
+        expect(articles).toHaveLength(10)
 
-        expect(articles).toBeSorted('articles.created_at', { ascending: true })
+        expect(articles).toBeSortedBy('created_at', { ascending: true })
 
         })
     })
@@ -197,7 +197,7 @@ describe('GET /api/articles', () => {
 
         const { articles } = body;
 
-        expect(articles).toHaveLength(12)
+        expect(articles).toHaveLength(10)
 
         articles.forEach((article) => {
             expect(article.topic).toBe('mitch')
@@ -215,13 +215,64 @@ describe('GET /api/articles', () => {
 
         const { articles } = body;
 
-        expect(articles).toHaveLength(12)
+        expect(articles).toHaveLength(10)
 
         articles.forEach((article) => {
             expect(article.topic).toBe('mitch')
         })
 
         expect(articles).toBeSortedBy('title', { descending: true })
+
+        })
+    })
+    test('status:200, path accepts a limit query', () => {
+        return request(app)
+        .get('/api/articles?limit=5')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(5)
+
+        })
+    })
+    test('status:200, path accepts a "p" query, which is the page number at which to start', () => {
+        return request(app)
+        .get('/api/articles?limit=5&p=5')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(5)
+
+        expect(articles[0]).toMatchObject({
+            article_id: 5, 
+            article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700", 
+            author: "rogersop", 
+            comment_count: "2", 
+            created_at: "2020-08-03T13:14:00.000Z", 
+            title: "UNCOVERED: catspiracy to bring down democracy", 
+            topic: "cats", 
+            votes: 0
+        })
+
+        })
+    })
+    test('status:200, path accepts a total_count query, which displays the total number of articles with any filters applied, discounting the limit', () => {
+        return request(app)
+        .get('/api/articles?topic=mitch&limit=8&p=3&total_count=true')
+        .expect(200)
+        .then(({body}) => {
+
+        const { articles } = body;
+
+        expect(articles).toHaveLength(8)
+
+        articles.forEach((article) => {
+            expect(article.total_count).toBe(13)
+        })
 
         })
     })
@@ -267,6 +318,26 @@ describe('GET /api/articles', () => {
 
         })
     })
+    test('status:400, responds with "Bad Request" when limit is not a number', () => {
+        return request(app)
+        .get('/api/articles?limit=n')
+        .expect(400)
+        .then(({body}) => {
+
+            expect(body.msg).toBe('Bad Request')
+
+        })
+    })
+    test('status:400, responds with "Bad Request" when "p" is not a number', () => {
+        return request(app)
+        .get('/api/articles?limit=5&p=n')
+        .expect(400)
+        .then(({body}) => {
+
+            expect(body.msg).toBe('Bad Request')
+
+        })
+    })
 });
 
 describe('GET /api/articles/:article_id/comments', () => {
@@ -278,7 +349,7 @@ describe('GET /api/articles/:article_id/comments', () => {
 
             const { comments } = body;
 
-            expect(comments).toHaveLength(11);
+            expect(comments).toHaveLength(10);
 
             comments.forEach((comment) => {
                 expect(comment).toMatchObject({
@@ -303,9 +374,42 @@ describe('GET /api/articles/:article_id/comments', () => {
 
             const { comments } = body;
 
-            expect(comments).toHaveLength(11)
+            expect(comments).toHaveLength(10)
 
-            expect(comments).toBeSorted('created_at', { ascending: true })
+            expect(comments).toBeSortedBy('created_at', { ascending: true })
+
+        })
+    })
+    test('status:200, path accepts a limit query', () => {
+        return request(app)
+        .get('/api/articles/1/comments?limit=5')
+        .expect(200)
+        .then(({body}) => {
+
+        const { comments } = body;
+
+        expect(comments).toHaveLength(5)
+
+        })
+    })
+    test('status:200, path accepts a "p" query, which is the page number at which to start', () => {
+        return request(app)
+        .get('/api/articles/1/comments?limit=5&p=5')
+        .expect(200)
+        .then(({body}) => {
+
+        const { comments } = body;
+
+        expect(comments).toHaveLength(5)
+
+        expect(comments[0]).toMatchObject({
+            comment_id: 8,
+            votes: 0,
+            created_at: '2020-04-14T20:19:00.000Z',
+            author: 'icellusedkars',
+            body: 'Delicious crackerbreads',
+            article_id: 1
+          })
 
         })
     })
@@ -329,6 +433,26 @@ describe('GET /api/articles/:article_id/comments', () => {
         .then(({body}) => {
 
             expect(body.msg).toBe('Invalid Input')
+
+        })
+    })
+    test('status:400, responds with "Bad Request" when limit is not a number', () => {
+        return request(app)
+        .get('/api/articles/1/comments?limit=L')
+        .expect(400)
+        .then(({body}) => {
+
+            expect(body.msg).toBe('Bad Request')
+
+        })
+    })
+    test('status:400, responds with "Bad Request" when "p" is not a number', () => {
+        return request(app)
+        .get('/api/articles/1/comments?limit=5&p=L')
+        .expect(400)
+        .then(({body}) => {
+
+            expect(body.msg).toBe('Bad Request')
 
         })
     })
@@ -809,6 +933,108 @@ describe('POST /api/articles', () => {
         return request(app)
         .post('/api/articles')
         .send(newArticle)
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe('Not Found')
+        })
+    })
+})
+
+describe('POST /api/topics', () => {
+    test('status:201, adds a new topic with the following properties: slug, description and responds with newly added topic', () => {
+
+        const newTopic = {
+            slug: "dogs",
+            description: "it's only fair"
+          }
+        
+        return request(app)
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(201)
+        .then(({ body }) => {
+
+            const { topic } = body;
+
+            expect(topic).toMatchObject({
+                slug: "dogs",
+                description: "it's only fair"
+            })
+        })
+    })
+    test('status:201, posts topic with no extra properties other than slug and description', () => {
+
+        const newTopic = {
+            slug: "dogs",
+            description: "it's only fair",
+            should_not_exist: "here we go again"
+          }
+
+        return request(app)
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(201)
+        .then(({body}) => {
+
+            const { topic } = body;
+
+            expect(topic).not.toHaveProperty('should_not_exist')
+        })
+    })
+    test('status:400, responds with "Bad Request" when slug is not defined', () => {
+
+        const newTopic = {
+            description: "it's only fair"
+          }
+
+        return request(app)
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+    test('status:400, responds with "Bad Request" when description is not defined', () => {
+
+        const newTopic = {
+            slug: "dogs"
+          }
+
+        return request(app)
+        .post('/api/topics')
+        .send(newTopic)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Bad Request')
+        })
+    })
+})
+
+describe('DELETE /api/articles/:article_id', () => {
+    test('status:204, responds with no content', () => {
+        return request(app)
+        .delete('/api/articles/1')
+        .expect(204)
+        .then(({res}) => {
+           
+            const { statusMessage } = res;
+            
+            expect(statusMessage).toBe('No Content')
+
+        })
+    })
+    test('status:400, responds with "Invalid Input" when article_id is an invalid type', () => {
+        return request(app)
+        .delete('/api/articles/:not_article_id')
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe('Invalid Input')
+        })
+    })
+    test('status:404, responds with "Not Found" when article_id is a valid type but does not exist', () => {
+        return request(app)
+        .delete('/api/articles/9999')
         .expect(404)
         .then(({body}) => {
             expect(body.msg).toBe('Not Found')

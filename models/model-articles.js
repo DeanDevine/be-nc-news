@@ -1,6 +1,6 @@
 const db = require('../db/connection')
 
-exports.selectArticles = (topic, sort_by, order) => {
+exports.selectArticles = (topic, sort_by, order, limit=10, p, total_count) => {
 
     const validTopic = ["mitch", "cats", "paper"]
 
@@ -20,6 +20,10 @@ exports.selectArticles = (topic, sort_by, order) => {
         return Promise.reject({ status: 400, msg: "Bad Request" })
     }
 
+    if (p && isNaN(p) || isNaN(limit)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" })
+    }
+
     let query = `SELECT 
     articles.author, 
     articles.title, 
@@ -28,9 +32,14 @@ exports.selectArticles = (topic, sort_by, order) => {
     articles.created_at,
     articles.votes, 
     articles.article_img_url,
-    COUNT(comments.article_id) AS comment_count 
-    FROM articles 
-    LEFT JOIN comments USING (article_id) `
+    COUNT(comments.article_id) AS comment_count`
+
+    if (total_count = true) {
+        query += `, MAX(articles.article_id) OVER () AS total_count`
+    }
+
+    query += ` FROM articles 
+    LEFT JOIN comments ON articles.article_id = comments.article_id `
 
     const queryValues = []
 
@@ -39,7 +48,7 @@ exports.selectArticles = (topic, sort_by, order) => {
         queryValues.push(topic)
     }
 
-    query += `GROUP BY articles.article_id `
+    query += `GROUP BY articles.article_id, comments.article_id `
 
     if (sort_by && !order) {
         query += `ORDER BY ${sort_by} ASC `
@@ -53,8 +62,16 @@ exports.selectArticles = (topic, sort_by, order) => {
         query += `ORDER BY articles.created_at DESC `
     }
 
-    if(sort_by && order) {
+    if (sort_by && order) {
         query += `ORDER BY ${sort_by} ${order} `
+    }
+
+    if (limit && !p) {
+        query += `LIMIT ${limit}`
+    }
+
+    if (limit && p) {
+        query += `LIMIT ${limit} OFFSET ${p}`
     }
 
     return db.query(`${query};`, queryValues).then(({rows}) => {
@@ -86,10 +103,9 @@ exports.selectArticle = (article_id) => {
     })
 }
 
-exports.selectCommentsByArticleId = (article_id) => {
+exports.selectCommentsByArticleId = (article_id, limit=10, p) => {
 
-    return db
-    .query(`SELECT 
+    let query = `SELECT 
     comment_id, 
     votes, 
     created_at, 
@@ -98,7 +114,22 @@ exports.selectCommentsByArticleId = (article_id) => {
     article_id 
     FROM comments 
     WHERE article_id = $1
-    ORDER BY created_at ASC`, [article_id])
+    ORDER BY created_at ASC `
+
+    if (p && isNaN(p) || isNaN(limit)) {
+        return Promise.reject({ status: 400, msg: "Bad Request" })
+    }
+
+    if (!p) {
+        query += `LIMIT ${limit}`
+    }
+
+    if (p) {
+        query += `LIMIT ${limit} OFFSET ${p}`
+    }
+
+    return db
+    .query(`${query};`, [article_id])
     .then((result) => {
         if (!result.rows.length) {
             return db.query('SELECT * FROM articles WHERE article_id = $1;', [article_id]) } else return result;
@@ -180,6 +211,24 @@ exports.insertArticle = (author, title, body, topic, article_img_url="https://im
         GROUP BY articles.article_id;`, [rows[0].article_id])
     }).then(({rows}) => {
         return rows[0]
+    })
+
+}
+
+exports.removeArticle = (article_id) => {
+
+    return db
+    .query(`SELECT * FROM articles
+    WHERE article_id = $1`, [article_id])
+    .then(({rows}) => {
+        if (!rows.length) {
+            return Promise.reject({ status: 404, msg: 'Not Found' })
+        }
+    }).then(() => {
+        return db.query(`DELETE FROM comments WHERE article_id = $1`, [article_id])
+    }).then(() => {
+        return db.query(`DELETE FROM articles
+        WHERE article_id = $1`, [article_id])
     })
 
 }

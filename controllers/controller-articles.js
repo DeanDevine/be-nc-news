@@ -1,10 +1,10 @@
-const { selectArticles, selectArticle, selectCommentsByArticleId, insertCommentIntoArticle, updateArticleVotes, insertArticle } = require("../models/model-articles");
+const { selectArticles, selectArticle, selectCommentsByArticleId, insertCommentIntoArticle, updateArticleVotes, insertArticle, removeArticle } = require("../models/model-articles");
 
 exports.getArticles = (req, res, next) => {
 
-    const { topic, sort_by, order } = req.query;
+    const { topic, sort_by, order, limit, p, total_count } = req.query;
 
-    selectArticles(topic, sort_by, order).then((articles) => {
+    selectArticles(topic, sort_by, order, limit, p, total_count).then((articles) => {
     res.status(200).send({articles})
 
 })
@@ -24,8 +24,9 @@ exports.getArticle = (req, res, next) => {
 exports.getCommentsByArticleId = (req, res, next) => {
    
     const { article_id } = req.params
+    const { limit, p } = req.query
 
-    return selectCommentsByArticleId(article_id).then((comments) => {
+    return selectCommentsByArticleId(article_id, limit, p).then((comments) => {
         res.status(200).send({comments})
     })
     .catch(next)
@@ -62,4 +63,15 @@ exports.postArticle = (req, res, next) => {
         res.status(201).send({ article })
     })
     .catch(next)
+}
+
+exports.deleteArticle = (req, res, next) => {
+
+    const { article_id } = req.params;
+
+    removeArticle(article_id).then(() => {
+        res.status(204).send()
+    })
+    .catch(next)
+
 }
