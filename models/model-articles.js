@@ -163,25 +163,24 @@ exports.insertCommentIntoArticle = (article_id, author, body) => {
 
 exports.updateArticleVotes = (article_id, inc_votes) => {
 
-const num = Number(inc_votes)
+  if (!inc_votes) {
+      return Promise.reject({ status: 400, msg: "Bad Request" })
+  }
 
-    // if (isNaN(inc_votes) || !inc_votes) {
-    //     return Promise.reject({ status: 400, msg: "Bad Request" })
-    // }
+  // if (isNaN(inc_votes) || !inc_votes) {
+  //     return Promise.reject({ status: 400, msg: "Bad Request" })
+  // }
 
-    let query = `UPDATE articles
+  let query = `UPDATE articles
     SET votes = votes + ${num}
-    WHERE article_id = $1 RETURNING *;`
+    WHERE article_id = $1 RETURNING *;`;
 
-    return db
-    .query(query, [article_id])
-    .then(({rows}) => {
-        if (!rows.length) {
-            return Promise.reject({ status: 404, msg: "Not Found" })
-        }
-        return rows[0];
-    })
-
+  return db.query(query, [article_id]).then(({ rows }) => {
+    if (!rows.length) {
+      return Promise.reject({ status: 404, msg: "Not Found" });
+    }
+    return rows[0];
+  });
 }
 
 exports.insertArticle = (author, title, body, topic, article_img_url="https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700") => {
