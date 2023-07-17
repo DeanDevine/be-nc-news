@@ -172,7 +172,7 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
   // }
 
   let query = `UPDATE articles
-    SET votes = votes + ${num}
+    SET votes = votes + ${inc_votes}
     WHERE article_id = $1 RETURNING *;`;
 
   return db.query(query, [article_id]).then(({ rows }) => {
