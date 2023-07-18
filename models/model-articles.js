@@ -114,7 +114,7 @@ exports.selectCommentsByArticleId = (article_id, limit=10, p) => {
     article_id 
     FROM comments 
     WHERE article_id = $1
-    ORDER BY created_at ASC `
+    ORDER BY created_at DESC `
 
     if (p && isNaN(p) || isNaN(limit)) {
         return Promise.reject({ status: 400, msg: "Bad Request" })
