@@ -145,11 +145,11 @@ exports.selectCommentsByArticleId = (article_id, limit=10, p) => {
 
 exports.insertCommentIntoArticle = (article_id, author, body) => {
 
-    if (author === undefined) {
+    if (!author) {
         return Promise.reject({ status: 400, msg: "Username required" })
     }
 
-    if (body === undefined) {
+    if (!body) {
         return Promise.reject({ status: 400, msg: "Comment must not be empty"})
     }
 
