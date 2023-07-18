@@ -2,7 +2,7 @@ const db = require('../db/connection')
 
 exports.selectArticles = (topic, sort_by, order, limit=10, p, total_count) => {
 
-    const validTopic = ["mitch", "cats", "paper"]
+    const validTopic = ["mitch", "cats", "paper", "coding", "cooking", "football"]
 
     const validSortBy = ["articles.author", "articles.title", "articles.article_id", "articles.topic", "articles.created_at", "articles.votes", "comment_count"]
 
