@@ -146,7 +146,7 @@ exports.selectCommentsByArticleId = (article_id, limit=10, p) => {
 exports.insertCommentIntoArticle = (article_id, author, body) => {
 
     if (!author) {
-        return Promise.reject({ status: 400, msg: "Username required" })
+        return Promise.reject({ status: 400, msg: "Username required and must be valid" })
     }
 
     if (!body) {
