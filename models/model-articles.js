@@ -51,7 +51,7 @@ exports.selectArticles = (topic, sort_by, order, limit=10, p, total_count) => {
     query += `GROUP BY articles.article_id, comments.article_id `
 
     if (sort_by && !order) {
-        query += `ORDER BY ${sort_by} ASC `
+        query += `ORDER BY ${sort_by} DESC `
     }
 
     if (order && !sort_by) {
