@@ -36,3 +36,34 @@ exports.updateCommentVotes = (comment_id, inc_votes) => {
     })
 
 }
+
+exports.selectCommentsByAuthor = (author) => {
+  let query = `SELECT 
+    comment_id, 
+    votes, 
+    created_at, 
+    author, 
+    body, 
+    article_id 
+    FROM comments 
+    WHERE author = $1
+    ORDER BY created_at DESC `;
+
+  return db
+    .query(`${query};`, [author])
+    .then((result) => {
+      if (!result.rows.length) {
+        return db.query("SELECT * FROM users WHERE username = $1;", [
+          author,
+        ]);
+      } else return result;
+    })
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return Promise.reject({ status: 404, msg: "Not Found" });
+      } else if (!rows[0].comment_id) {
+        return [];
+      }
+      return rows;
+    });
+};

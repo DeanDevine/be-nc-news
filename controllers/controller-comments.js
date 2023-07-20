@@ -1,4 +1,4 @@
-const { removeComment, updateCommentVotes } = require("../models/model-comments");
+const { removeComment, updateCommentVotes, selectCommentsByAuthor } = require("../models/model-comments");
 
 exports.deleteComment = (req, res, next) => {
 
@@ -21,3 +21,13 @@ exports.patchComment = (req, res, next) => {
     })
     .catch(next)
 }
+
+exports.getCommentsByAuthor = (req, res, next) => {
+  const { username } = req.params;
+
+  return selectCommentsByAuthor(username)
+    .then((comments) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
