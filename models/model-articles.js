@@ -9,7 +9,7 @@ exports.selectArticles = (topic, sort_by, order, limit=10, p, total_count) => {
     const validOrder = ["ASC", "DESC"]
 
     if (topic && !validTopic.includes(topic)) {
-        return Promise.reject({ status: 400, msg: "Bad Request" })
+        return Promise.reject({ status: 404, msg: "Not Found" })
     }
 
     if (sort_by && !validSortBy.includes(sort_by)) {
