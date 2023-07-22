@@ -18,7 +18,7 @@ exports.removeComment = (comment_id) => {
 
 exports.updateCommentVotes = (comment_id, inc_votes) => {
 
-    if (isNaN(inc_votes) || !inc_votes) {
+    if (isNaN(inc_votes)) {
         return Promise.reject({ status: 400, msg: "Bad Request" })
     }
 
