@@ -182,7 +182,7 @@ exports.updateArticleVotes = (article_id, inc_votes) => {
 exports.insertArticle = (author, title, body, topic, article_img_url="https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700") => {
 
     if (!author || !title || !body || !topic) {
-        return Promise.reject({ status: 400, msg: "Bad Request" })
+        return Promise.reject({ status: 400, msg: "Author, title, body and topic required" })
     }
 
     return db
