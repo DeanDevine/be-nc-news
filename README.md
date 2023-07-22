@@ -18,7 +18,7 @@ PGDATABASE=nc_news
 
 PGDATABASE=nc_news_test
 
-**Install dotenv, express and pg package dependencies the following command in the terminal:**
+**Install dotenv, express and pg package dependencies with the following command in the terminal:**
 
 npm install
 
