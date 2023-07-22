@@ -26,7 +26,11 @@ exports.selectUser = (username) => {
     });
 };
 
-exports.insertUser = (username, name, avatar_url) => {
+exports.insertUser = (
+  username,
+  name,
+  avatar_url = "https://cdn-icons-png.flaticon.com/512/761/761229.png?w=740&t=st=1690055541~exp=1690056141~hmac=16e46f9df299a4b1860d80412f270e3e02e627c54b5cc26fcf16d522a2c548a3"
+) => {
   if (!username || !name) {
     return Promise.reject({ status: 400, msg: "Username and name required" });
   }
