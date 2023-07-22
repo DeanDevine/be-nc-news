@@ -32,10 +32,18 @@ exports.insertUser = (username, name, avatar_url) => {
   }
 
   return db
-    .query(
-      "INSERT INTO users (username, name, avatar_url) VALUES ($1, $2, $3) RETURNING *;",
-      [username, name, avatar_url]
-    )
+    .query("SELECT username FROM users WHERE username = $1", [username])
+    .then(({ rows }) => {
+      if (rows.length) {
+        return Promise.reject({ status: 400, msg: "Username already exists" });
+      }
+    })
+    .then(() => {
+      return db.query(
+        "INSERT INTO users (username, name, avatar_url) VALUES ($1, $2, $3) RETURNING *;",
+        [username, name, avatar_url]
+      );
+    })
     .then(({ rows }) => {
       return rows[0];
     });
