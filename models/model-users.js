@@ -29,10 +29,15 @@ exports.selectUser = (username) => {
 exports.insertUser = (
   username,
   name,
-  avatar_url = "https://cdn-icons-png.flaticon.com/512/761/761229.png?w=740&t=st=1690055541~exp=1690056141~hmac=16e46f9df299a4b1860d80412f270e3e02e627c54b5cc26fcf16d522a2c548a3"
+  avatar_url = "https://as1.ftcdn.net/v2/jpg/05/49/76/36/1000_F_549763670_hkKD4bQwrrxaSGwz6WjCdE0yKVBQ0G2x.jpg"
 ) => {
   if (!username || !name) {
     return Promise.reject({ status: 400, msg: "Username and name required" });
+  }
+
+  if (!avatar_url.trim().length) {
+    avatar_url =
+      "https://as1.ftcdn.net/v2/jpg/05/49/76/36/1000_F_549763670_hkKD4bQwrrxaSGwz6WjCdE0yKVBQ0G2x.jpg";
   }
 
   return db
@@ -56,8 +61,13 @@ exports.insertUser = (
 exports.updateUser = (
   username,
   name,
-  avatar_url = "https://cdn-icons-png.flaticon.com/512/761/761229.png?w=740&t=st=1690055541~exp=1690056141~hmac=16e46f9df299a4b1860d80412f270e3e02e627c54b5cc26fcf16d522a2c548a3"
+  avatar_url = "https://as1.ftcdn.net/v2/jpg/05/49/76/36/1000_F_549763670_hkKD4bQwrrxaSGwz6WjCdE0yKVBQ0G2x.jpg"
 ) => {
+  if (!avatar_url.trim().length) {
+    avatar_url =
+      "https://as1.ftcdn.net/v2/jpg/05/49/76/36/1000_F_549763670_hkKD4bQwrrxaSGwz6WjCdE0yKVBQ0G2x.jpg";
+  }
+
   let query = `UPDATE users
   SET name = $2, avatar_url = $3
   WHERE username = $1 RETURNING *;`;
