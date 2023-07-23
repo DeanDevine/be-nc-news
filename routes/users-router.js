@@ -3,13 +3,14 @@ const {
   getUsers,
   getUser,
   postUser,
+  patchUser,
 } = require("../controllers/controller-users");
 
 const userRouter = require("express").Router();
 
 userRouter.route("/").get(getUsers).post(postUser);
 
-userRouter.get("/:username", getUser);
+userRouter.route("/:username").get(getUser).patch(patchUser);
 
 userRouter.get("/:username/comments", getCommentsByAuthor);
 
